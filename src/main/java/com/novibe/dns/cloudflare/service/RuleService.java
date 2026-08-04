@@ -92,8 +92,8 @@ public class RuleService {
             if (!result.isSuccess()) {
                 Log.fail("Failed to remove old rule with id %s: %s".formatted(id, result.getErrors()));
             } else {
-                Log.progress(++counter + "/" + removeList.size());
                 rules.remove(rule);
+                Log.progress(++counter + "/" + removeList.size() + " removed");
             }
         }
         Log.common("\n%s of %s old rules have been removed".formatted(counter, removeList.size()));
