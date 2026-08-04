@@ -1,6 +1,5 @@
 package com.novibe.dns.next_dns.http;
 
-import com.novibe.common.exception.CredentialsException;
 import com.novibe.common.exception.DnsHttpError;
 import com.novibe.common.util.Log;
 import com.novibe.dns.next_dns.http.dto.response.NextDnsResponse;
@@ -32,7 +31,7 @@ public class NextDnsRateLimitedApiProcessor {
                 }
             } catch (DnsHttpError e) {
                 if (e.getCode() == 524 || e.getCode() == 429) {
-                    Log.common("Sending speed: %s requests per second"
+                    Log.common("\nSending speed: %s requests per second"
                             .formatted((double) requestsUntilRateLimitHitCounter / 60));
                     Log.common("Code %s. Api rate limit has reached".formatted(e.getCode()));
                     i--;
@@ -40,7 +39,7 @@ public class NextDnsRateLimitedApiProcessor {
                     requestsUntilRateLimitHitCounter = 0;
                     Log.io("Continue...");
                 } else {
-                    throw new CredentialsException(e);
+                    throw e;
                 }
             }
         }

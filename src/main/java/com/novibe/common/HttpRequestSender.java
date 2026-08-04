@@ -2,9 +2,8 @@ package com.novibe.common;
 
 import com.google.gson.Gson;
 import com.novibe.common.base_structures.DnsProfile;
-import com.novibe.common.util.Jsonable;
 import com.novibe.common.exception.DnsHttpError;
-import com.novibe.common.util.Log;
+import com.novibe.common.util.Jsonable;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +71,6 @@ public abstract class HttpRequestSender {
         semaphore.release();
         if (response.statusCode() > 299) {
             DnsHttpError httpError = new DnsHttpError(response, body);
-            Log.fail(httpError.getMessage());
             switch (response.statusCode()) {
                 case 401 -> react401();
                 case 403 -> react403();

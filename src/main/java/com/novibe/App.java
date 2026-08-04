@@ -57,7 +57,7 @@ public class App {
         AnnotationConfigApplicationContext currentContext = new AnnotationConfigApplicationContext();
         currentContext.setParent(commonContext);
         currentContext.scan(dnsBasePackage);
-        currentContext.registerBean("DnsProfile", DnsProfile.class, () -> dnsProfile);
+        currentContext.registerBean(DnsProfile.class, () -> dnsProfile);
         currentContext.refresh();
         return currentContext;
     }

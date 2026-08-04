@@ -1,6 +1,6 @@
 package com.novibe.dns.cloudflare.service;
 
-import com.novibe.common.data_sources.HostsOverrideListsLoader;
+import com.novibe.common.base_structures.BypassRoute;
 import com.novibe.common.service.ExcludeRedirectCheckService;
 import com.novibe.common.util.FunctionWrapper;
 import com.novibe.common.util.Log;
@@ -46,13 +46,13 @@ public class ListService {
         return saveNewLists(createListRequests);
     }
 
-    public void omitExcludedOverrides(List<HostsOverrideListsLoader.BypassRoute> routes) {
+    public void omitExcludedOverrides(List<BypassRoute> routes) {
         routes.removeIf(route -> excludeRedirectCheckService.shouldExclude(route.website()));
     }
 
 
     @SneakyThrows
-    public Map<String, List<GatewayListDto>> createNewOverrideLists(List<HostsOverrideListsLoader.BypassRoute> routes) {
+    public Map<String, List<GatewayListDto>> createNewOverrideLists(List<BypassRoute> routes) {
 
         Map<String, List<GatewayListDto>> result = new HashMap<>();
 
@@ -127,10 +127,10 @@ public class ListService {
         return result;
     }
 
-    Map<String, List<CreateListRequest>> formOverrideListRequestsByIp(List<HostsOverrideListsLoader.BypassRoute> routes) {
+    Map<String, List<CreateListRequest>> formOverrideListRequestsByIp(List<BypassRoute> routes) {
         Map<String, String> mergedWebsiteOnIp = new HashMap<>();
         //Priority of IP is provided by sources order
-        for (HostsOverrideListsLoader.BypassRoute route : routes) {
+        for (BypassRoute route : routes) {
             mergedWebsiteOnIp.putIfAbsent(route.website(), route.ip());
         }
         //Group to lists by IP
