@@ -34,7 +34,7 @@ public class App {
                 Log.fail(credentialsException.getMessage());
             } catch (Exception exception) {
                 Log.fail("Unexpected exception on profile " + dnsProfile.number());
-                exception.printStackTrace(System.out);
+                throw exception;
             } finally {
                 if (nonNull(currentContext)) currentContext.close();
             }
