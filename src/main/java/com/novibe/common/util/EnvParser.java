@@ -5,7 +5,7 @@ import com.novibe.common.config.EnvironmentVariables;
 import com.novibe.common.exception.UserInputException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -13,10 +13,12 @@ import static java.util.Objects.isNull;
 public class EnvParser {
 
     public static List<String> parse(String envValue) {
-        if (isNull(envValue)) return List.of();
+        ArrayList<String> parsed = new ArrayList<>();
+        if (isNull(envValue)) return parsed;
         envValue = envValue.strip();
-        if (envValue.isEmpty()) return List.of();
-        return Arrays.asList(envValue.strip().split(","));
+        if (envValue.isEmpty()) return parsed;
+        Collections.addAll(parsed, envValue.strip().split(","));
+        return parsed;
     }
 
     public static List<DnsProfile> parseProfiles() {
@@ -32,22 +34,19 @@ public class EnvParser {
         int profilesAmount = clientIdList.size();
 
         if (dnsList.size() == 1) {
-            String[] dnsFiller = new String[profilesAmount];
-            Arrays.fill(dnsFiller, dnsList.getFirst());
-            dnsList = Arrays.asList(dnsFiller);
+            dnsList = Collections.nCopies(profilesAmount, dnsList.getFirst());
         } else if (dnsList.size() != profilesAmount) {
             throw UserInputException.noStackTrace("DNS values amount must be equal to CLIENT_ID values amount or contain exactly one provider");
         }
 
         donorList.replaceAll(val -> "-".equals(val) ? null : val);
-        if (donorList.size() == 1) {
-            String[] donorFiller = new String[profilesAmount];
-            Arrays.fill(donorFiller, donorList.getFirst());
-            donorList = Arrays.asList(donorFiller);
-        } else if (!donorList.isEmpty() && donorList.size() != profilesAmount) {
+        if (donorList.size() <= 1) {
+            donorList = Collections.nCopies(profilesAmount, donorList.isEmpty() ? null : donorList.getFirst());
+        } else if (donorList.size() != profilesAmount) {
             throw UserInputException.noStackTrace("DONOR_DNS values amount must be equal to CLIENT_ID values amount or contain exactly one provider");
         }
         ArrayList<DnsProfile> dnsProfiles = new ArrayList<>();
+
         for (int i = 0; i < profilesAmount; i++) {
             DnsProfile dnsProfile = DnsProfile.builder()
                     .dnsProvider(dnsList.get(i).toUpperCase())
