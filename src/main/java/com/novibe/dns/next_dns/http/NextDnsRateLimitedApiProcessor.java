@@ -3,7 +3,6 @@ package com.novibe.dns.next_dns.http;
 import com.novibe.common.exception.DnsHttpError;
 import com.novibe.common.util.Log;
 import com.novibe.dns.next_dns.http.dto.response.NextDnsResponse;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 import java.time.Duration;
@@ -16,7 +15,6 @@ import static java.util.Optional.ofNullable;
 @UtilityClass
 public class NextDnsRateLimitedApiProcessor {
 
-    @SneakyThrows
     public <D, R extends NextDnsResponse<?>> void callApi(List<D> requestList, Function<D, R> request) {
         int requestsUntilRateLimitHitCounter = 0;
         for (int i = 0; i < requestList.size(); i++) {
@@ -46,11 +44,14 @@ public class NextDnsRateLimitedApiProcessor {
         Log.common("\nCompleted");
     }
 
-    @SneakyThrows
     private void runRateLimiterResetWaitTimer() {
         final int WAIT_SECONDS = 60;
         for (int timer = WAIT_SECONDS; timer > 0; timer--) {
-            Thread.sleep(Duration.of(1, ChronoUnit.SECONDS));
+            try {
+                Thread.sleep(Duration.of(1, ChronoUnit.SECONDS));
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             Log.progress("Waiting for reset: " + timer + " seconds");
         }
     }
